@@ -7,6 +7,7 @@ import Messages exposing (..)
 import Models exposing (Model)
 import Puzzle exposing (Board, LinearBoard, Piece(..), num, isMove, isBlank, isCorrect, clearBoard, toList)
 import List exposing (sortWith)
+import Maybe.Extra exposing (values)
 
 view : Model -> Html Msg
 view ({ board, blankXY } as model) =
@@ -39,7 +40,7 @@ viewBoard { board, blankXY } boardList =
             ((_, Num n), (_, Num m)) -> compare n m 
 
     in
-        List.map
+        Maybe.Extra.values <| List.map
             (\( xy, piece ) -> 
                 let 
                     (x, y) = xy 
@@ -47,14 +48,14 @@ viewBoard { board, blankXY } boardList =
                     h = 75
                 in
                     if isBlank xy board then
-                        a [ style [("display", "none")] ] []
+                        Nothing
                     else
-                        a [ 
+                        Just (a [ 
                             class <| "button piece " ++ moveStr xy, onClick <| Move xy piece,
                             style [("left", toString (w * x) ++ "px"), ("top", toString (h * y) ++ "px")] ]
                             [ span [ class "icon is-medium" ]
                                 [ p [ class <| correctStr xy piece ++ " num" ] [ text <| toString <| num piece ]
                                 ]
-                            ]
+                            ])
             )
-            (List.sortWith comparePieces boardList)
+            <| List.sortWith comparePieces boardList
