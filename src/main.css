@@ -27,8 +27,8 @@
   }
   
   .piece {
-    width: 75px;
-    height: 75px;
+    width: 25%;
+    height: 25%;
     font-size: 1.8rem;
     position: absolute;
     transition-property: all;

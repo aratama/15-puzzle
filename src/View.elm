@@ -44,15 +44,15 @@ viewBoard { board, blankXY } boardList =
             (\( xy, piece ) -> 
                 let 
                     (x, y) = xy 
-                    w = 75
-                    h = 75
+                    w = 25
+                    h = 25
                 in
                     if isBlank xy board then
                         Nothing
                     else
                         Just (a [ 
                             class <| "button piece " ++ moveStr xy, onClick <| Move xy piece,
-                            style [("left", toString (w * x) ++ "px"), ("top", toString (h * y) ++ "px")] ]
+                            style [("left", toString (w * x) ++ "%"), ("top", toString (h * y) ++ "%")] ]
                             [ span [ class "icon is-medium" ]
                                 [ p [ class <| correctStr xy piece ++ " num" ] [ text <| toString <| num piece ]
                                 ]
