@@ -6,7 +6,7 @@ import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Models exposing (Model)
 import Puzzle exposing (Board, LinearBoard, Piece(..), num, isMove, isBlank, isCorrect, clearBoard, toList)
-
+import List exposing (sortWith)
 
 view : Model -> Html Msg
 view ({ board, blankXY } as model) =
@@ -31,18 +31,30 @@ viewBoard { board, blankXY } boardList =
                 "is-move"
             else
                 "is-not-move"
+
+        comparePieces x y = case (x, y) of 
+            ((_, Blank), (_, Blank)) -> EQ 
+            ((_, Num n), (_, Blank)) -> GT
+            ((_, Blank), (_, Num n)) -> LT
+            ((_, Num n), (_, Num m)) -> compare n m 
+
     in
         List.map
-            (\( xy, piece ) ->
-                if isBlank xy board then
-                    a [ class "button is-static piece" ]
-                        [ span [ class "icon is-medium" ] []
-                        ]
-                else
-                    a [ class <| "button piece " ++ moveStr xy, onClick <| Move xy piece ]
-                        [ span [ class "icon is-medium" ]
-                            [ p [ class <| correctStr xy piece ++ " num" ] [ text <| toString <| num piece ]
+            (\( xy, piece ) -> 
+                let 
+                    (x, y) = xy 
+                    w = 75
+                    h = 75
+                in
+                    if isBlank xy board then
+                        a [ style [("display", "none")] ] []
+                    else
+                        a [ 
+                            class <| "button piece " ++ moveStr xy, onClick <| Move xy piece,
+                            style [("left", toString (w * x) ++ "px"), ("top", toString (h * y) ++ "px")] ]
+                            [ span [ class "icon is-medium" ]
+                                [ p [ class <| correctStr xy piece ++ " num" ] [ text <| toString <| num piece ]
+                                ]
                             ]
-                        ]
             )
-            boardList
+            (List.sortWith comparePieces boardList)
